@@ -1,0 +1,19 @@
+<html>
+<head>
+<title>Form test</title>
+</head>
+ 
+<body>
+<h1>Python Form test</h1><hr>
+ 
+<form name="Form" method="GET" action="/num_win">
+勝利数 <input type="text" size="30" name="num_win">
+<input type="submit" value="submit" name="button">
+</form>
+{% if name %}
+  <h1>{{ name }}さん！{{ mail }}テンプレートからのHello Worldだよ！</h1>
+{% else %}
+  <h1>テンプレートからのHello Worldだよ！</h1>
+{% endif %}
+</body>
+</html>
