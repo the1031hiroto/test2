@@ -22,13 +22,14 @@ th {
 
 td {
   background-color: #f9f9f9;
-}
-
-th, td {
   min-width: 120px;
-  padding: 10px 20px;
+  text-align: center;
 }
-
+th {
+  padding: .3rem 0;
+  min-width: 120px;
+  text-align: center;
+}
 th.active {
   color: #fff;
 }
