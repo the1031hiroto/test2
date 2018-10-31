@@ -27,9 +27,9 @@ years = range(17,9,-1)
 urls = []
 
 #URLを入力：2018年だけ命名規則が違う
-urls.append("https://baseball-data.com/stats/hitter-all/avg-4.html")
+urls.append("https://baseball-data.com/stats/hitter-all/avg-1.html")
 for year in years:
-    urls.append("https://baseball-data.com/"+ "{0:02d}".format(year)+"/stats/hitter-all/avg-4.html")
+    urls.append("https://baseball-data.com/"+ "{0:02d}".format(year)+"/stats/hitter-all/avg-1.html")
 
 #データをURLから取得
 for url in urls:
@@ -43,17 +43,16 @@ for url in urls:
 
 df_m = pd.concat(df_all,axis=1)
 
+#df_m.to_csv('data/to_csv_tutu_year_all.csv')
+#df_m_salary.to_csv('data/to_csv_tutu_year_all_salary.csv')
 #print(df_all[0].head(10))
 #print(df_all_salary[0].head(10))
-"""
+
 df_marged = []
 for i in range(0,8,1):
-    print(i)
-    df_marged[i] = pd.merge(df_all_salary[i], df_all[i], left_on='選手名', right_on='選手名')
+    df_marged.append(pd.merge(df_all_salary[i], df_all[i + 1], left_on='選手名', right_on='選手名'))
+    print(df_marged[i][df_marged[i]['選手名'].isin(['筒香　嘉智'])])
 print(df_marged[0].head(10))
-"""
-df_marged = pd.merge(df_all_salary[0], df_all[0], left_on='選手名', right_on='選手名')
-print(df_marged)
 
 """
 df_tutu = df_m[df_m['選手名2018'].isin(['筒香　嘉智'])]
