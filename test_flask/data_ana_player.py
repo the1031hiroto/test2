@@ -56,7 +56,12 @@ for url in urlsSalary:
     l.append(None)
     df_marged['年棒（変化）'] = l
 
-    df_marged.to_sql('tutu5', con, if_exists='append', index=None)
+    #df_marged.to_sql('tutu5', con, if_exists='append', index=None)
+
+    #scvで出力
+    name = url.replace('https://www.gurazeni.com/player/', '')
+    print(name)
+    df_marged.to_csv('data/' + name + '.csv')
 """
     df_test = df_marged.as_matrix()
     print(df_test)
@@ -66,8 +71,8 @@ print(df_all)
 df_m = pd.DataFrame(df_all)
 print(df_m)
 """
-df_sql = psql.read_sql("SELECT * FROM tutu5", con)
-print(df_sql)
+#df_sql = psql.read_sql("SELECT * FROM tutu5", con)
+#print(df_sql)
 
 
 # サンプルテーブルを作成
