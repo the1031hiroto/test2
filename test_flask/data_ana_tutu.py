@@ -28,9 +28,9 @@ l = ['X2']
 for i in range(0,int(len(df_marged)) - 2,1):
     l.append(int(df_marged.iat[i+1, 0]) - int(df_marged.iat[i+2, 0]))
 l.append(None)
-print(l)
+#print(l)
 df_marged['年棒（変化）'] = l
-print(df_marged)
+#print(df_marged)
 
 
 import sqlite3
