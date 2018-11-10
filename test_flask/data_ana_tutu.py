@@ -12,7 +12,7 @@ url = 'https://www.gurazeni.com/player/420'
 print('取得URL：'+url)
 df_hello = pd.io.html.read_html(url)
 df3 = pd.DataFrame({'年': ['2019'],
-                    '年俸(推定)': ['0']}).set_index('年')
+                    '年俸(推定)': ['X']}).set_index('年')
 df4 = df_hello[1].drop("チーム", axis=1).drop("背番号", axis=1).replace('年', '', regex=True).set_index('年')
 df_5 = pd.concat([df3, df4])
 #df1['年棒（変化）'] = df1['年俸(推定)'] - df1['年俸(推定)']
@@ -23,7 +23,37 @@ df2 = df2.drop("四球", axis=1).drop("死球", axis=1)
 df2.index=['2019','2018','2017','2016','2015','2014','2013','2012','2011']
 df_marged = pd.concat([df_5, df2], axis=1, join_axes=[df_5.index])
 df_marged = df_marged.replace('万円', '', regex=True).replace('億円', '0000', regex=True).replace('億', '', regex=True).replace(',', '', regex=True)
+
+l = ['X2']
+for i in range(0,int(len(df_marged)) - 2,1):
+    l.append(int(df_marged.iat[i+1, 0]) - int(df_marged.iat[i+2, 0]))
+l.append(None)
+print(l)
+df_marged['年棒（変化）'] = l
 print(df_marged)
+
+
+import sqlite3
+import pandas.io.sql as psql
+ 
+# sqlite3に接続
+con = sqlite3.connect("data.db")
+cur = con.cursor()
+"""
+# サンプルテーブルを作成
+cur.execute('CREATE TABLE articles  (id int, title varchar(1024), body text, created datetime)')
+ 
+# サンプルデータを挿入
+cur.execute('insert into articles  values (1, "sample1", "AAAA", "2017-07-14 00:00:00")')
+cur.execute('insert into articles  values (2, "sample2", "BBBB", "2017-07-15 00:00:00")')
+"""
+# Select文からDataFrameを作成
+df_sql = psql.read_sql("SELECT * FROM articles;", con)
+
+# Dataframeをsqlに保存
+df_sql2 = pd.DataFrame([['sample3', 'CCC', '2017-07-16 00:00:00']], columns=['title', 'body', 'created'], index=[2])
+df_sql2.to_sql('articles', con, if_exists='append', index=None)
+print(df_sql)
 """
 #scvで出力
 df_all = pd.concat(df_all,axis=1)
