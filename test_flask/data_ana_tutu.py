@@ -39,20 +39,22 @@ import pandas.io.sql as psql
 # sqlite3に接続
 con = sqlite3.connect("data.db")
 cur = con.cursor()
-"""
+
 # サンプルテーブルを作成
-cur.execute('CREATE TABLE articles  (id int, title varchar(1024), body text, created datetime)')
- 
+#cur.execute('CREATE TABLE tut4  (年俸"（"推定"）" int, 打率 int, 打数 int, 安打 int, 打点 int, 本塁打 int, 三振 int, 盗塁 int, 四死球 int, 年棒"("変化")" int)')
+"""
 # サンプルデータを挿入
 cur.execute('insert into articles  values (1, "sample1", "AAAA", "2017-07-14 00:00:00")')
 cur.execute('insert into articles  values (2, "sample2", "BBBB", "2017-07-15 00:00:00")')
-"""
+
 # Select文からDataFrameを作成
 df_sql = psql.read_sql("SELECT * FROM articles;", con)
 
 # Dataframeをsqlに保存
 df_sql2 = pd.DataFrame([['sample3', 'CCC', '2017-07-16 00:00:00']], columns=['title', 'body', 'created'], index=[2])
-df_sql2.to_sql('articles', con, if_exists='append', index=None)
+"""
+#df_marged.to_sql('tutu4', con, if_exists='append', index=None)
+df_sql = psql.read_sql("SELECT * FROM tutu4;", con)
 print(df_sql)
 """
 #scvで出力
