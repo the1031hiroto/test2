@@ -11,26 +11,43 @@ df_all = []
 url = 'https://www.gurazeni.com/player/420'
 print('取得URL：'+url)
 df_hello = pd.io.html.read_html(url)
-df3 = pd.DataFrame({'年': ['2019'],
-                    '年俸(推定)': ['X']}).set_index('年')
-df4 = df_hello[1].drop("チーム", axis=1).drop("背番号", axis=1).replace('年', '', regex=True).set_index('年')
-df_5 = pd.concat([df3, df4])
-#df1['年棒（変化）'] = df1['年俸(推定)'] - df1['年俸(推定)']
-df2 = df_hello[2].drop("二塁打", axis=1).drop("三塁打", axis=1).set_index('年')
+#df4 = df_hello[1].drop("チーム", axis=1).drop("背番号", axis=1).replace('年', '', regex=True).set_index('年')
+df4 = df_hello[1].drop("チーム", axis=1).drop("背番号", axis=1).replace('年', '', regex=True)
+df4 = df4.astype({'年': int})
+df3 = pd.DataFrame({'年': [int(df4[0:1]['年']) + 1],
+                    '年俸(推定)': ['X']})
+df3.set_index('年')
+df4.set_index('年')
+#print(df3)
+#print(df4)
+df_5 = pd.concat([df3, df4]).set_index('年')
+#print(df_5)
+df2 = df_hello[2].drop("二塁打", axis=1).drop("三塁打", axis=1).replace('年', '', regex=True)
 df2['安打'] = df2['安打'] - df2['本塁打']
 df2['四死球'] = df2['四球'] + df2['死球']
 df2 = df2.drop("四球", axis=1).drop("死球", axis=1)
-df2.index=['2019','2018','2017','2016','2015','2014','2013','2012','2011']
+print(int(df2[0:1]['年']) + 1)
+print(int(df2[0:1]['年']) - int(len(df2)) + 1)
+reindex =[]
+for i in range(int(df2[0:1]['年']) + 1, int(df2[0:1]['年']) - int(len(df2)) + 1, -1):
+    reindex.append(i)
+print(reindex)
+df2['reindex'] = reindex
+#df2['reindex'] = [2019,2018,2017,2016,2015,2014,2013,2012,2011]
+df2 = df2.drop("年", axis=1).set_index('reindex')
+#print(df2)
+#df2.index=['2019','2018','2017','2016','2015','2014','2013','2012','2011']
 df_marged = pd.concat([df_5, df2], axis=1, join_axes=[df_5.index])
 df_marged = df_marged.replace('万円', '', regex=True).replace('億円', '0000', regex=True).replace('億', '', regex=True).replace(',', '', regex=True)
-
+test = int(len(df_marged)) - 2
+#print(df_marged)
 l = ['X2']
-for i in range(0,int(len(df_marged)) - 2,1):
+for i in range(0, 8, 1):
     l.append(int(df_marged.iat[i+1, 0]) - int(df_marged.iat[i+2, 0]))
 l.append(None)
 #print(l)
 df_marged['年棒（変化）'] = l
-#print(df_marged)
+print(df_marged)
 
 
 import sqlite3
