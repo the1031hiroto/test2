@@ -31,13 +31,13 @@ for url in urlsSalary:
     print('取得URL：'+url)
     df_raw = pd.io.html.read_html(url)
     df_salary = df_raw[1].drop("チーム", axis=1).drop("背番号", axis=1).replace('年', '', regex=True)
+    df_salary = df_salary.replace('万円', '', regex=True).replace('億円', '0000', regex=True).replace('億', '', regex=True).replace(',', '', regex=True)
 
     #最終年から期間を作成
     reindex =[]    
     for i in range(int(df_salary[0:1]['年']) + 1, int(df_salary[0:1]['年']) - int(len(df_salary)) + 1, -1):
         reindex.append(i)
     df_salary['reindex'] = reindex
-    print(df_salary['reindex'])
     df_salary = df_salary.drop("年", axis=1).set_index('reindex')
     #最新年に空を追加　※この空のとこを予想したい
     df_salary = df_salary.shift()
@@ -50,13 +50,21 @@ for url in urlsSalary:
     df_record['安打'] = df_record['安打'] - df_record['本塁打']
     df_record['四死球'] = df_record['四球'] + df_record['死球']
     df_record = df_record.drop("四球", axis=1).drop("死球", axis=1)
-    df_record['年'] = df_record['年'].astype(int)
-    df_record = df_record.set_index('年')
-    df_record = df_record.shift()
-    #print(df_record)
+
+    reindex =[]
+    last_year = int(df_record[0:1]['年']) - int(len(df_record)) + 1
+    for i in range(int(df_record[0:1]['年']) + 1, last_year, -1):
+        reindex.append(i)
+    df_record['reindex'] = reindex
+    df_record = df_record.drop("年", axis=1).set_index('reindex')
+
+    #df_record['年'] = df_record['年'].astype(int)
+    #df_record = df_record.set_index('年')
+    #df_record = df_record.shift()
+    df_record.loc[last_year] = None
+    print(df_record)
 
     df_marged = pd.concat([df_all_info, df_record], axis=1, join_axes=[df_all_info.index])
-    df_marged = df_marged.replace('万円', '', regex=True).replace('億円', '0000', regex=True).replace('億', '', regex=True).replace(',', '', regex=True)
 
     l = ['X2']
     for i in range(0,int(len(df_marged)) - 2,1):
