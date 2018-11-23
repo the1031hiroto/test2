@@ -6,6 +6,7 @@ import json
 import sys
 import sqlite3
 import pandas.io.sql as psql
+#import pandas.tseries.offsets as offsets
 
 # sqlite3に接続
 con = sqlite3.connect("data.db")
@@ -30,12 +31,26 @@ for url in urlsSalary:
     print('取得URL：'+url)
     df_raw = pd.io.html.read_html(url)
     df_salary = df_raw[1].drop("チーム", axis=1).drop("背番号", axis=1).replace('年', '', regex=True)
-    df_salary = df_salary.astype({'年': int})
-    df_dummy = pd.DataFrame({'年': [int(df_salary[0:1]['年']) + 1],
-                        '年俸(推定)': ['X']})
-    df_dummy = df_dummy.set_index('年')
+
+    #最終年を取得
+    date = int(df_salary.iloc[-1]['年']) + 1
+    #最終年から期間を作成
+    df_date = pd.DataFrame(
+        {'年': pd.date_range(str(date), periods=len(df_salary), freq='Y')},
+        columns=['年']
+    )
+    #降順で作られちゃうから昇順に変更
+    df_date = df_date.sort_values('年', ascending=False).reset_index()
+    #ぶっこむ
+    df_salary['年'] = df_date['年']
+    #作った期間をIndexに設定
     df_salary = df_salary.set_index('年')
-    df_all_info = pd.concat([df_dummy, df_salary])
+    #最新年に空を追加　※この空のとこを予想したい
+    df_salary = df_salary.shift()
+    print(df_salary)
+
+    df_all_info = df_salary
+    #print(df_all_info)
 
     df_record = df_raw[2].drop("二塁打", axis=1).drop("三塁打", axis=1).replace('年', '', regex=True)
     df_record['安打'] = df_record['安打'] - df_record['本塁打']
@@ -57,12 +72,15 @@ for url in urlsSalary:
     df_marged['年棒（変化）'] = l
 
     #df_marged.to_sql('tutu5', con, if_exists='append', index=None)
-
+    #変化率 print(df_marged.diff())
+    #df['date'] = pd.to_datetime(df['date'])
+    #print(df['date'].dtype)
+"""
     #scvで出力
     name = url.replace('https://www.gurazeni.com/player/', '')
     print(name)
     df_marged.to_csv('data/' + name + '.csv')
-"""
+
     df_test = df_marged.as_matrix()
     print(df_test)
     df_all.append(df_test)
@@ -89,5 +107,5 @@ df_sql = psql.read_sql("SELECT * FROM articles;", con)
 df_sql2 = pd.DataFrame([['sample3', 'CCC', '2017-07-16 00:00:00']], columns=['title', 'body', 'created'], index=[2])
 """
 #df_marged.to_sql('tutu4', con, if_exists='append', index=None)
-df_sql = psql.read_sql("SELECT * FROM tutu4;", con)
+#df_sql = psql.read_sql("SELECT * FROM tutu4;", con)
 #print(df_sql)
