@@ -37,6 +37,7 @@ for url in urlsSalary:
     for i in range(int(df_salary[0:1]['年']) + 1, int(df_salary[0:1]['年']) - int(len(df_salary)) + 1, -1):
         reindex.append(i)
     df_salary['reindex'] = reindex
+    print(df_salary['reindex'])
     df_salary = df_salary.drop("年", axis=1).set_index('reindex')
     #最新年に空を追加　※この空のとこを予想したい
     df_salary = df_salary.shift()
@@ -49,13 +50,9 @@ for url in urlsSalary:
     df_record['安打'] = df_record['安打'] - df_record['本塁打']
     df_record['四死球'] = df_record['四球'] + df_record['死球']
     df_record = df_record.drop("四球", axis=1).drop("死球", axis=1)
-    reindex =[]    
-    for i in range(int(df_record[0:1]['年']) + 1, int(df_record[0:1]['年']) - int(len(df_record)) + 1, -1):
-        reindex.append(i)
-    #print(reindex)
-    df_record['reindex'] = reindex
-    df_record = df_record.drop("年", axis=1).set_index('reindex')
-
+    df_record['年'] = df_record['年'].astype(int)
+    df_record = df_record.set_index('年')
+    df_record = df_record.shift()
     #print(df_record)
 
     df_marged = pd.concat([df_all_info, df_record], axis=1, join_axes=[df_all_info.index])
@@ -71,6 +68,8 @@ for url in urlsSalary:
     #変化率 print(df_marged.diff())
     #df['date'] = pd.to_datetime(df['date'])
     #print(df['date'].dtype)
+
+    print(df_marged)
 """
     #scvで出力
     name = url.replace('https://www.gurazeni.com/player/', '')
