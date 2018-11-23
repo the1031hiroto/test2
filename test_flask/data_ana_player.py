@@ -32,22 +32,15 @@ for url in urlsSalary:
     df_raw = pd.io.html.read_html(url)
     df_salary = df_raw[1].drop("チーム", axis=1).drop("背番号", axis=1).replace('年', '', regex=True)
 
-    #最終年を取得
-    date = int(df_salary.iloc[-1]['年']) + 1
     #最終年から期間を作成
-    df_date = pd.DataFrame(
-        {'年': pd.date_range(str(date), periods=len(df_salary), freq='Y')},
-        columns=['年']
-    )
-    #降順で作られちゃうから昇順に変更
-    df_date = df_date.sort_values('年', ascending=False).reset_index()
-    #ぶっこむ
-    df_salary['年'] = df_date['年']
-    #作った期間をIndexに設定
-    df_salary = df_salary.set_index('年')
+    reindex =[]    
+    for i in range(int(df_salary[0:1]['年']) + 1, int(df_salary[0:1]['年']) - int(len(df_salary)) + 1, -1):
+        reindex.append(i)
+    df_salary['reindex'] = reindex
+    df_salary = df_salary.drop("年", axis=1).set_index('reindex')
     #最新年に空を追加　※この空のとこを予想したい
     df_salary = df_salary.shift()
-    print(df_salary)
+    #print(df_salary)
 
     df_all_info = df_salary
     #print(df_all_info)
@@ -56,11 +49,14 @@ for url in urlsSalary:
     df_record['安打'] = df_record['安打'] - df_record['本塁打']
     df_record['四死球'] = df_record['四球'] + df_record['死球']
     df_record = df_record.drop("四球", axis=1).drop("死球", axis=1)
-    reindex =[]
+    reindex =[]    
     for i in range(int(df_record[0:1]['年']) + 1, int(df_record[0:1]['年']) - int(len(df_record)) + 1, -1):
         reindex.append(i)
+    #print(reindex)
     df_record['reindex'] = reindex
     df_record = df_record.drop("年", axis=1).set_index('reindex')
+
+    #print(df_record)
 
     df_marged = pd.concat([df_all_info, df_record], axis=1, join_axes=[df_all_info.index])
     df_marged = df_marged.replace('万円', '', regex=True).replace('億円', '0000', regex=True).replace('億', '', regex=True).replace(',', '', regex=True)
