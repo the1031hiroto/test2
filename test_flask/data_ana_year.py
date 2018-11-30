@@ -4,8 +4,6 @@ import pandas as pd
 import requests
 import json
 import sys
-import sqlite3
-import pandas.io.sql as psql
 
 #回帰分析
 from sklearn import linear_model
@@ -13,31 +11,73 @@ from sklearn import preprocessing
 from sklearn.linear_model import LinearRegression
 #import pandas.tseries.offsets as offsets
 
-# sqlite3に接続
-con = sqlite3.connect("data.db")
-cur = con.cursor()
-
-# サンプルテーブルを作成
-cur.execute('CREATE TABLE IF NOT EXISTS tut5  (年俸"（"推定"）" int, 打率 int, 打数 int, 安打 int, 打点 int, 本塁打 int, 三振 int, 盗塁 int, 四死球 int, 年棒"("変化")" int)')
-#cur.execute('CREATE TABLE IF NOT EXISTS https://www.gurazeni.com/player/420 (年俸"（"推定"）" int, 打率 int, 打数 int, 安打 int, 打点 int, 本塁打 int, 三振 int, 盗塁 int, 四死球 int, 年棒"("変化")" int)')
-#cur.execute('CREATE TABLE IF NOT EXISTS https://www.gurazeni.com/player/421 (年俸"（"推定"）" int, 打率 int, 打数 int, 安打 int, 打点 int, 本塁打 int, 三振 int, 盗塁 int, 四死球 int, 年棒"("変化")" int)')
-
 #urlをリスト形式で取得
+years = range(17,9,-1)
 df_all = []
-yearsSalary = range(420, 421, 1)
+df_all_salary = []
+df_all_record = []
 urlsSalary = []
+urlsRecord = []
 
-#URLを入力
-for year in yearsSalary:
-    urlsSalary.append("https://www.gurazeni.com/player/"+ str(year))
+#URLを入力：2018年だけ命名規則が違う
+urlsSalary.append("https://baseball-data.com/ranking-salary/all/h.html")
+for year in years:
+    urlsSalary.append('https://baseball-data.com/' + str(year) + '/ranking-salary/all/h.html')
 
 #データをURLから取得
 for url in urlsSalary:
-    print('取得URL：'+url)
-    df_raw = pd.io.html.read_html(url)
-    df_salary = df_raw[1].drop("チーム", axis=1).drop("背番号", axis=1).replace('年', '', regex=True)
-    df_salary = df_salary.replace('万円', '', regex=True).replace('億円', '0000', regex=True).replace('億', '', regex=True).replace(',', '', regex=True)
+    df_raw_salary = pd.io.html.read_html(url)
+    df_salary = df_raw_salary[0]
+    df_salary = df_salary[['選手名', '年俸(推定)']].replace('万円', '', regex=True).replace(',', '', regex=True)
+    df_all_salary.append(df_salary)
 
+#URLを入力：2018年だけ命名規則が違う
+urlsRecord.append("https://baseball-data.com/stats/hitter-all/avg-1.html")
+for year in years:
+    urlsRecord.append('https://baseball-data.com/' + str(year) + '/stats/hitter-all/avg-1.html')
+
+#データをURLから取得
+for url in urlsRecord:
+    df_raw_record = pd.io.html.read_html(url)
+    df_record = df_raw_record[0]
+    df_record = df_record.drop("チーム", axis=1).drop("順位", axis=1).replace(',', '', regex=True)
+    df_all_record.append(df_record)
+
+#選手IDの作成
+name_list = []
+dic = {}
+for i in range(len(df_all_record)):
+    name_list.extend(df_all_record[i]['選手名'])
+name_list = list(set(name_list))
+for i,name in enumerate(name_list):
+    dic[name] = i
+print(pd.DataFrame(dic))
+#選手IDの付与
+for i in range(len(df_all_salary)):
+    #df_all_record[i]['ID'] = -1
+    df_all_salary[i]['ID'] = -1
+    for j in range(len(df_all_salary[i])):
+        #df_all_record[i].loc[j,'ID'] = dic[df_all_record[i].loc[j,'選手名']]
+        df_all_salary[i].loc[j,'ID'] = dic[df_all_salary[i].loc[j,'選手名']]
+    #df_all_record[i].index = df_all_record[i]['ID']
+    #df_all_record[i] = df_all_record[i].drop('ID',axis=1)
+    df_all_salary[i].index = df_all_salary[i]['ID']
+    df_all_salary[i] = df_all_salary[i].drop('ID',axis=1)
+
+#index被りを除去
+for i in range(len(df_all_salary)):
+    doubled_index = []
+    count = df_all_salary[i].index.value_counts()
+    for j in count.index:
+        if(count.loc[j]>1):
+            doubled_index.append(j)
+    df_all_salary[i] = df_all_salary[i].drop(doubled_index)
+
+print(df_all_salary[0].head(10))
+#df_m_salary = pd.concat(df_all_salary,axis=1)
+#df_marged = pd.concat([df_all_salary[0], df_all_record[0]], axis=1, join='inner')
+#print(df_marged.head(10))
+"""
     #最終年から期間を作成
     reindex =[]    
     for i in range(int(df_salary[0:1]['年']) + 1, int(df_salary[0:1]['年']) - int(len(df_salary)) + 1, -1):
@@ -128,6 +168,7 @@ for url in urlsSalary:
     df_marged_corr['result'] = df_marged_corr['回帰係数'] * df_marged_corr['単相関係数'] * df_marged_corr[2019]
     print(df_marged_corr)
     print(df_marged_corr['result'].sum() + 1600)
+"""
 
 """
     #scvで出力
