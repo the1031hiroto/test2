@@ -96,9 +96,11 @@ for url in urlsSalary:
     x = df_raw.drop("年俸(推定)", axis=1)
     #正規化
     X = mm.fit_transform(x)
-    Y = df_raw['年俸(推定)']
-    print(pd.DataFrame(X))
-    #print(Y)
+    y = df_raw['年俸(推定)']
+    print(y)
+    Y = mm.fit_transform(y)
+    #print(pd.DataFrame(X))
+    print(Y)
 
     linear_regression = LinearRegression()
     linear_regression.fit(X,Y)
