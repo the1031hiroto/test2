@@ -85,12 +85,20 @@ for url in urlsSalary:
 
     print(df_marged)
 
+    #回帰分析
+    df_raw = df_marged.drop([2020,2019,2011]).drop("年棒（変化）", axis=1).astype(float)
+    data_corr = df_raw.corr()
+    df_corr = pd.DataFrame(data_corr)
+    df_corr = df_corr.loc['年俸(推定)']
+    del df_corr['年俸(推定)']
+
     mm = preprocessing.MinMaxScaler()
-    x = df_marged.drop("年俸(推定)", axis=1).drop("年棒（変化）", axis=1)
-    X = X.drop(0)
+    x = df_raw.drop("年俸(推定)", axis=1)
+    #正規化
     X = mm.fit_transform(x)
-    Y = df_marged['年俸(推定)']
+    Y = df_raw['年俸(推定)']
     print(pd.DataFrame(X))
+    #print(Y)
 
     linear_regression = LinearRegression()
     linear_regression.fit(X,Y)
@@ -110,7 +118,16 @@ for url in urlsSalary:
     df_data = df_data.set_index('column')
     df_test = pd.concat([df_data, df_corr], axis=1)
     df_test = df_test.rename(columns={'data': '回帰係数', '年俸(推定)': '単相関係数'})
-    print(df_test)
+    #予測したい年のデータ
+    data_for_calculation = mm.fit_transform(df_marged.drop([2020,2011]).drop("年俸(推定)", axis=1).drop("年棒（変化）", axis=1))
+    df_calculation = pd.DataFrame(x.columns, columns=["column"]).set_index('column')
+    df_calculation[2019] = data_for_calculation[0]
+    #一つにまとめる
+    df_marged_corr = pd.concat([df_test, df_calculation], axis=1, join_axes=[df_test.index])
+    #予測を計算
+    df_marged_corr['result'] = df_marged_corr['回帰係数'] * df_marged_corr['単相関係数'] * df_marged_corr[2019]
+    print(df_marged_corr)
+    print(df_marged_corr['result'].sum() + 1600)
 
 """
     #scvで出力
@@ -126,23 +143,4 @@ print(df_all)
 df_m = pd.DataFrame(df_all)
 print(df_m)
 """
-#df_sql = psql.read_sql("SELECT * FROM tutu5", con)
-#print(df_sql)
 
-
-# サンプルテーブルを作成
-#cur.execute('CREATE TABLE tut4  (年俸"（"推定"）" int, 打率 int, 打数 int, 安打 int, 打点 int, 本塁打 int, 三振 int, 盗塁 int, 四死球 int, 年棒"("変化")" int)')
-"""
-# サンプルデータを挿入
-cur.execute('insert into articles  values (1, "sample1", "AAAA", "2017-07-14 00:00:00")')
-cur.execute('insert into articles  values (2, "sample2", "BBBB", "2017-07-15 00:00:00")')
-
-# Select文からDataFrameを作成
-df_sql = psql.read_sql("SELECT * FROM articles;", con)
-
-# Dataframeをsqlに保存
-df_sql2 = pd.DataFrame([['sample3', 'CCC', '2017-07-16 00:00:00']], columns=['title', 'body', 'created'], index=[2])
-"""
-#df_marged.to_sql('tutu4', con, if_exists='append', index=None)
-#df_sql = psql.read_sql("SELECT * FROM tutu4;", con)
-#print(df_sql)
