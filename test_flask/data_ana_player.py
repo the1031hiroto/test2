@@ -79,7 +79,7 @@ for url in urlsSalary:
 
 #df_all1 = pd.concat([df_all[0], df_all[1]]).dropna()
 df_all = df_all.reset_index()
-df_all.to_csv('data/data_all3.csv')
+#df_all.to_csv('data/data_all3.csv')
 print(df_all)
 """
     #回帰分析

@@ -22,4 +22,4 @@ for url in urlsSalary:
     df_all = pd.concat([df_all, df_m])
 
 print(df_all)
-df_all.to_csv('data/data_all.csv')
+#df_all.to_csv('data/data_all.csv')

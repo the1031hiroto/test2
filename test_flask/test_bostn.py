@@ -18,12 +18,14 @@ linear_regression = LinearRegression()
 
 #説明変数を縦(1)の列と指定して削除します！
 X = boston_df.drop("PRICE", 1)
-
+print(X)
 #Yに目的変数を入れます！
 Y = boston_df.PRICE
+print(Y)
 linear_regression.fit(X,Y)
 print(linear_regression.coef_)
 
 #print(boston_df.index)
 df_calculation = pd.DataFrame(linear_regression.coef_)
 print(df_calculation)
+print("精度:", linear_regression.score(X, Y))
