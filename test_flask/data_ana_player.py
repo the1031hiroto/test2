@@ -6,6 +6,11 @@ import json
 import sys
 import sqlite3
 import pandas.io.sql as psql
+
+#回帰分析
+from sklearn import linear_model
+from sklearn import preprocessing
+from sklearn.linear_model import LinearRegression
 #import pandas.tseries.offsets as offsets
 
 # sqlite3に接続
@@ -19,7 +24,7 @@ cur.execute('CREATE TABLE IF NOT EXISTS tut5  (年俸"（"推定"）" int, 打�
 
 #urlをリスト形式で取得
 df_all = []
-yearsSalary = range(420, 422, 1)
+yearsSalary = range(420, 421, 1)
 urlsSalary = []
 
 #URLを入力
@@ -62,10 +67,11 @@ for url in urlsSalary:
     #df_record = df_record.set_index('年')
     #df_record = df_record.shift()
     df_record.loc[last_year] = None
-    print(df_record)
+    #print(df_record)
 
     df_marged = pd.concat([df_all_info, df_record], axis=1, join_axes=[df_all_info.index])
 
+    #diff使えよ https://note.nkmk.me/python-pandas-diff-pct-change/
     l = ['X2']
     for i in range(0,int(len(df_marged)) - 2,1):
         l.append(int(df_marged.iat[i+1, 0]) - int(df_marged.iat[i+2, 0]))
@@ -78,6 +84,34 @@ for url in urlsSalary:
     #print(df['date'].dtype)
 
     print(df_marged)
+
+    mm = preprocessing.MinMaxScaler()
+    x = df_marged.drop("年俸(推定)", axis=1).drop("年棒（変化）", axis=1)
+    X = X.drop(0)
+    X = mm.fit_transform(x)
+    Y = df_marged['年俸(推定)']
+    print(pd.DataFrame(X))
+
+    linear_regression = LinearRegression()
+    linear_regression.fit(X,Y)
+    clf = linear_model.LinearRegression()
+    # 予測モデルを作成（単回帰）
+    clf.fit(X, Y)
+    # 回帰係数と切片の抽出
+    a = clf.coef_
+    b = clf.intercept_  
+    # 回帰係数
+    print("回帰係数:", a)
+    print("切片:", b) 
+    print("決定係数:", clf.score(X, Y))
+
+    df_data = pd.DataFrame(x.columns, columns=["column"])
+    df_data['data'] = pd.DataFrame(linear_regression.coef_)
+    df_data = df_data.set_index('column')
+    df_test = pd.concat([df_data, df_corr], axis=1)
+    df_test = df_test.rename(columns={'data': '回帰係数', '年俸(推定)': '単相関係数'})
+    print(df_test)
+
 """
     #scvで出力
     name = url.replace('https://www.gurazeni.com/player/', '')
