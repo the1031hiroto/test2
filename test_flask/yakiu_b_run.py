@@ -24,6 +24,10 @@ def tutu():
     data1 = df_tutu
     return render_template('tutu.html', data1=data1)
 
+@app.route('/draggable')
+def test():
+    return render_template('draggable.html')
+
 if __name__ == '__main__':
     app.run()
 

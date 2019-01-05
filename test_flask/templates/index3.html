@@ -44,6 +44,7 @@
               :columns="gridColumns"
               :filter-key="searchQuery">
             </demo-grid>
+            <li v-for="task in tasks">[[ task ]]</li>
     </div>
 
     </body>
@@ -56,9 +57,38 @@
         delimiters: ["[[", "]]"],
         data: {
           searchQuery: '',
-          gridColumns: ['選手名', 'チーム', '年俸(推定)', '試合', '打率', '打席数', '打数', '安打', '打点', '本塁打', '二塁打', '三塁打', '四球', '死球', '三振', '盗塁', '犠打', '併殺打', '出塁率', '長打率', 'OPS', '年数', '年齢'],
-          gridData: 
-             data1
+          gridColumns: [
+            '選手名',
+            'チーム',
+            '年俸(推定)',
+            '試合',
+            '打率',
+            '打席数',
+            '打数',
+            '安打',
+            '打点',
+            '本塁打',
+            '二塁打',
+            '三塁打',
+            '四球',
+            '死球',
+            '三振',
+            '盗塁',
+            '犠打',
+            '併殺打',
+            '出塁率',
+            '長打率',
+            'OPS',
+            '年数',
+            '年齢'
+          ],
+          gridData: data1,
+          tasks: [
+            'task1',
+            'task2',
+            'task3',
+            'task4',
+          ]
         }
       })
     </script>
