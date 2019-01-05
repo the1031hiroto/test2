@@ -4,63 +4,70 @@
     <title>Form test</title>
     <!--report-->
     <script src="https://cdn.jsdelivr.net/npm/vue"></script>
-    <link rel="stylesheet" href="/static/test_table.css" type="text/css" />
-    <!-- component template -->
-    <script type="text/x-template" id="grid-template">
-        <table>
-          <thead>
-            <tr>
-              <th v-for="key in columns"
-                @click="sortBy(key)"
-                :class="{ active: sortKey == key }">
-                [[ key | capitalize ]]
-                <span class="arrow" :class="sortOrders[key] > 0 ? 'asc' : 'dsc'">
-                </span>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="entry in filteredData">
-              <td v-for="key in columns">
-                [[entry[key]]]
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </script>
-      
+      <!-- Latest compiled and minified CSS -->
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+      <!-- Optional theme -->
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+      <!-- Latest compiled and minified JavaScript -->
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+      <link rel="stylesheet" href="/static/test_table.css" type="text/css" />
+
+      <script src="https://cdn.jsdelivr.net/npm/vue-tables-2@1.4.70/dist/vue-tables-2.min.js"></script>
+
     </head>
-     
+
     <body>
-    <h1>test</h1><hr>
-         
-    <!-- demo root element -->
-    <div id="demo">
-            <form id="search">
-              Search <input name="query" v-model="searchQuery">
-            </form>
-            <demo-grid
-              :data="gridData"
-              :columns="gridColumns"
-              :filter-key="searchQuery">
-            </demo-grid>
-    </div>
+      <div id="demo">
+        <v-client-table :columns="columns" :data="data1" :options="options">
+        </v-client-table>
+      </div>
 
     </body>
-    <script src="/static/test_table.js"></script>
-    <script>      
-    var data1 = {{ data1| safe }}
-      // bootstrap the demo
-      var demo = new Vue({
+    <script>
+      Vue.use(VueTables.ClientTable);
+      const data1 = {{ data1| safe }}
+      const columns = [
+        '選手名',
+        'チーム',
+        '年俸(推定)',
+        '試合',
+        '打率',
+        '打席数',
+        '打数',
+        '安打',
+        '打点',
+        '本塁打',
+        '二塁打',
+        '三塁打',
+        '四球',
+        '死球',
+        '三振',
+        '盗塁',
+        '犠打',
+        '併殺打',
+        '出塁率',
+        '長打率',
+        'OPS',
+        '年数',
+        '年齢'
+      ]
+      const demo = new Vue({
         el: '#demo',
         delimiters: ["[[", "]]"],
         data: {
           searchQuery: '',
-          gridColumns: ['選手名', 'チーム', '年俸(推定)', '試合', '打率', '打席数', '打数', '安打', '打点', '本塁打', '二塁打', '三塁打', '四球', '死球', '三振', '盗塁', '犠打', '併殺打', '出塁率', '長打率', 'OPS', '年数', '年齢'],
-          gridData: 
-             data1
+          columns: columns,
+          gridData: data1,
+          options: {
+            columnsDropdown: true,
+            filterByColumn: true,
+            sortable: columns
+          }
         }
       })
     </script>
-    
-    </html>
+
+</html>
