@@ -1,0 +1,94 @@
+<html>
+    <head>
+    <title>Form test</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/vue/2.5.2/vue.min.js"></script>
+    <!-- CDNJS :: Sortable (https://cdnjs.com/) -->
+    <script src="//cdn.jsdelivr.net/npm/sortablejs@1.7.0/Sortable.min.js"></script>
+    <!-- CDNJS :: Vue.Draggable (https://cdnjs.com/) -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/Vue.Draggable/2.17.0/vuedraggable.min.js"></script>
+    </head>
+    <body>
+        <h1>test</h1><hr>
+        <div id="app">
+            <draggable element="ul">
+                <li v-for="task in tasks">[[ task ]]</li>
+            </draggable>
+
+            <table>
+                <thead>
+                    <draggable element="tr">
+                        <th v-for="key in gridColumns">[[ key ]]</th>
+                    </draggable>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>メヒア</td>
+                        <td>西武</td>
+                        <td>50,000万円</td>
+                        <td>78</td>
+                        <td>0.205</td>
+                        <td>222</td>
+                        <td>200</td>
+                        <td>41</td>
+                        <td>20</td>
+                        <td>9</td>
+                        <td>1</td>
+                        <td>2</td>
+                        <td>18</td>
+                        <td>3</td>
+                        <td>59</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>3</td>
+                        <td>0.27899999999999997</td>
+                        <td>0.375</td>
+                        <td>0.654</td>
+                        <td>5年</td>
+                        <td>32歳</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </body>
+
+<script>
+    var app = new Vue({
+        el: '#app',
+        delimiters: ["[[", "]]"],
+        data: {
+            tasks: [
+                'task1',
+                'task2',
+                'task3',
+                'task4',
+            ],
+            gridColumns: [
+            '選手名',
+            'チーム',
+            '年俸(推定)',
+            '試合',
+            '打率',
+            '打席数',
+            '打数',
+            '安打',
+            '打点',
+            '本塁打',
+            '二塁打',
+            '三塁打',
+            '四球',
+            '死球',
+            '三振',
+            '盗塁',
+            '犠打',
+            '併殺打',
+            '出塁率',
+            '長打率',
+            'OPS',
+            '年数',
+            '年齢'
+          ],
+        }
+    })
+</script>
