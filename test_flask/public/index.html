@@ -1,0 +1,90 @@
+
+<html>
+    <head>
+    <title>Form test</title>
+    <!--report-->
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+      <!-- Latest compiled and minified CSS -->
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+      <!-- Optional theme -->
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+      <!-- Latest compiled and minified JavaScript -->
+      <!--
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+      -->
+
+      <link rel="stylesheet" href="test_table.css" type="text/css" />
+
+      <script src="https://cdn.jsdelivr.net/npm/vue-tables-2@1.4.70/dist/vue-tables-2.min.js"></script>
+
+      <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    </head>
+
+    <body>
+      <div id="demo">
+        <v-client-table :columns="columns" :data="mainData" :options="options">
+        </v-client-table>
+      </div>
+
+    </body>
+    <script>
+      Vue.use(VueTables.ClientTable);
+
+      const columns = [
+        '選手名',
+        'チーム',
+        '年俸(推定)',
+        '試合',
+        '打率',
+        '打席数',
+        '打数',
+        '安打',
+        '打点',
+        '本塁打',
+        '二塁打',
+        '三塁打',
+        '四球',
+        '死球',
+        '三振',
+        '盗塁',
+        '犠打',
+        '併殺打',
+        '出塁率',
+        '長打率',
+        'OPS',
+        '年数',
+        '年齢'
+      ]
+
+      async function getData() {
+        let data = await Promise.all([
+            axios.get("https://us-central1-baseball-test-d74f9.cloudfunctions.net/mock/test"),
+          ]);
+        return data;
+      }
+
+      getData().then(value => {
+        const demo = new Vue({
+          el: '#demo',
+          delimiters: ["[[", "]]"],
+          data: {
+            searchQuery: '',
+            columns: columns,
+            mainData: value[0].data,
+            options: {
+              columnsDropdown: true,
+              filterByColumn: true,
+              sortable: columns
+            }
+          }
+        })
+      })
+
+      //const data1 = {{ data1| safe }}
+      //console.log(data1[0])
+    </script>
+
+</html>
