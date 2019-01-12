@@ -58,3 +58,10 @@ th.active .arrow {
   border-right: 4px solid transparent;
   border-top: 4px solid #fff;
 }
+
+/*tableの最左列固定*/
+td:first-child, th:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 100;
+}

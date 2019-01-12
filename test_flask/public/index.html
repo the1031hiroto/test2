@@ -61,7 +61,7 @@
 
       async function getData() {
         let data = await Promise.all([
-            axios.get("https://us-central1-baseball-test-d74f9.cloudfunctions.net/mock/test"),
+            axios.get("https://baseball-test-d74f9.firebaseio.com/test.json"),
           ]);
         return data;
       }
@@ -87,4 +87,27 @@
       //console.log(data1[0])
     </script>
 
+    <script src="https://www.gstatic.com/firebasejs/5.5.5/firebase.js"></script>
+    <script>
+      // Initialize Firebase
+      var config = {
+        apiKey: "AIzaSyBtXlXdTSty5El0Xacn0CXlIorKVtqesxg",
+        authDomain: "baseball-test-d74f9.firebaseapp.com",
+        databaseURL: "https://baseball-test-d74f9.firebaseio.com",
+        projectId: "baseball-test-d74f9",
+        storageBucket: "baseball-test-d74f9.appspot.com",
+        messagingSenderId: "886862023113"
+      };
+      firebase.initializeApp(config);
+
+      const database = firebase.database();
+      const dataRef = database.ref('test');
+      dataRef.once("value")
+      .then(function(snapshot) {
+        console.log(snapshot.val())
+      });
+
+      var commentsRef = firebase.database().ref('comments');
+      commentsRef.set({ body: "テスト！" });
+    </script>
 </html>
