@@ -47,7 +47,11 @@ for i in range(len(df_all)):
 
 #scvで出力
 df_m = pd.concat(df_all,axis=1)
+
 """
+path = 'data/to_json_out.json'
+df_m.to_json(path)
+
 df_m.to_csv('data/to_csv_out.tsv', sep='\t')
 df_m.to_csv('data/to_csv_out.csv')
 
